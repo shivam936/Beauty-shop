@@ -2,9 +2,15 @@ import mongoose from "mongoose"
 import User from "./user.model"
 
 const orderSchema = new mongoose.Schema({
+
+    name: {
+        type: String,
+        required:true
+    },
+
     userId:{
-        type:mongoose.Schema.ObjectId,
-        ref:User
+        type:String,
+        required:true
     },
     products:{
         type:Array,
@@ -13,6 +19,18 @@ const orderSchema = new mongoose.Schema({
     total:{
         type:Number,
         required:true,
+    },
+
+    address:{
+        type:String
+    },
+
+    phone:{
+        type:Number
+    },
+
+    email:{
+        type: String
     },
 
     status:{
