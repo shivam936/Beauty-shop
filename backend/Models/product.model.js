@@ -55,7 +55,7 @@ const productSchema = new mongoose.Schema({
     },
 
     inStock:{
-        type:boolean,
+        type: Boolean,
         default:true
     },
 
@@ -68,6 +68,8 @@ const productSchema = new mongoose.Schema({
         }
     ]
 }, {timestamps:true})
+
+productSchema.index({"$**" : "text"})
 
 const Product = mongoose.model("Product", productSchema);
 export default Product;
