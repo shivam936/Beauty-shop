@@ -2,8 +2,8 @@ import asyncHandler from "express-async-handler"
 import Product from "../Models/product.model.js"
 
 export const CreateProduct =  asyncHandler(async(req ,res) => {
-    const newProducts = await Product(req.body);
-    const product = newProducts.save();
+    const newProducts = new Product(req.body);
+    const product = await newProducts.save();
     if(product)
     {
         res.status(201).json(product);
