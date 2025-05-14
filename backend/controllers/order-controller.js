@@ -57,7 +57,7 @@ export const getOrderUser = asyncHandler(async(req , res) => {
 })
 
 export const getAllOrders = asyncHandler(async(req , res) => {
-    const getAllorder = await Order.find().reverse();
+    const getAllorder = await Order.find();
     if(getAllorder)
     {
         res.status(200).json(getAllorder);
