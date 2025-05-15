@@ -52,7 +52,7 @@ export const getOrderUser = asyncHandler(async(req , res) => {
     }
     else{
         res.status(400);
-        throw new Error("Not able to fetchOrders for this User ");
+        throw new Error("Not able to fetchOrders for this User "); 
     }
 })
 
