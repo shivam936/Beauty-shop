@@ -3,33 +3,32 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-const createTransport = (config) => {
-    const transport = nodemailer.createTransport(config);
-    return transport;
+function createTransporter(config){
+    const transporter = nodemailer.createTransport(config);
+    return transporter;
 }
 
 let configurations = {
     service: "gmail",
-    host: "smpt.gmail.com",
+    host: "smtp.gmail.com",
     port: 587,
-    requireTLS: true,
+    requireTls: true,
     auth:{
     user: process.env.EMAIL,
-    password: process.env.PASSWORD
+    pass: process.env.PASSWORD
     }
 }
 
     const sendMail = async(MessageOptions) => {
-    const transport = createTransport(configurations);
+    const transport = createTransporter(configurations);
     await transport.verify();
+
     await transport.sendMail(MessageOptions, (error , info) => {
             if(error)
             {
                 console.log(error);
             }
-            else{
-                console.log("Message sent successfully");
-            }
+            console.log(info.response);
     })
 }
 export default sendMail;
