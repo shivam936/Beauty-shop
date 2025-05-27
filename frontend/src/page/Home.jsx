@@ -1,8 +1,15 @@
-import React from 'react'
+import Banner from '../components/Banner'
+import Category from "../components/Category"
+import Products from '../components/Products'
+import Footer from '../components/Footer.jsx'
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <div>
+      <Banner/>
+      <Category/>
+      <Products/>
+    </div>
   )
 }
 
