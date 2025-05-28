@@ -5,6 +5,7 @@ import Myaccount from "./page/Myaccount.jsx"
 import Home from "./page/Home.jsx"
 import {RouterProvider , createBrowserRouter, Outlet} from "react-router-dom"
 import Announcement from './components/Announcement.jsx'
+import Product from './page/Product.jsx'
 
 const App = () => {
 
@@ -35,6 +36,10 @@ const App = () => {
           {
             path: "/Myaccount",
             element: <Myaccount/>
+          },
+          {
+            path: "/product/:productId",
+            element: <Product/>
           }
         ]
       }    
