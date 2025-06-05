@@ -1,10 +1,12 @@
 import {createBrowserRouter , RouterProvider, Outlet} from "react-router-dom"
 import Menu from "./components/Menu"
 import Home from "./pages/Home"
-import Product from "./pages/Products"
+import Products from "./pages/Products"
 import User from "./pages/User"
 import Order from "./pages/Orders"
 import Banners from "./pages/Banners"
+import Product from "./pages/Product"
+import NewProduct from "./pages/NewProduct"
 
 const App = () => {
   const Layout = () => {
@@ -38,7 +40,7 @@ const App = () => {
         },
         {
           path: "/products",
-          element: <Product/>
+          element: <Products/>
         },
         {
           path: "/orders",
@@ -47,7 +49,14 @@ const App = () => {
         {
           path: "/banner",
           element: <Banners/>
-
+        },
+        {
+          path: "/product/:productId",
+          element: <Product/>
+        },
+        {
+          path: "/newProduct",
+          element: <NewProduct/>
         }
       ]
     }
