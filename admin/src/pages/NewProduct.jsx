@@ -1,7 +1,71 @@
-import React from "react";
-import { FaPlus } from "react-icons/fa";
+import  { useState } from "react"; 
+import { FaPlus, FaTrash } from "react-icons/fa";
+import axios from "axios"
+import { userRequest } from "../requestUrl";
 
 const NewProduct = () => {
+  const [selectedImage , setSelectedImage] = useState(null)
+  const [image , setImage] = useState('')
+  const [selectedOptions, setSelectedOptions] = useState({
+    categories : [],
+    skinType: [],
+    concern: []
+  })
+
+
+
+  const [input , setInput] = useState({})
+  const [upload , setUpload] = useState('')
+
+  const handleImage = (e) => {
+    if(e.target.files && e.target.files.length > 0)
+    {
+      setSelectedImage(e.target.files[0])
+    }
+  }
+
+  const handleOptions = (e) => {
+    const {name , value} = e.target;
+    setSelectedOptions((prev) => ({
+      ...prev,
+      [name]: prev[name].includes(value) ? prev[name] : [...prev[name], value]
+    }))
+  }
+
+  const handleRemoveOptions = (name, value) => {
+    setSelectedOptions((prev) => ({
+      ...prev,
+      [name] : prev[name].filter((options) => options !== value)
+    }))
+  }
+
+  const handleInput = (e) => {
+    setInput((prev) => {
+      return {...prev , [e.target.name] : e.target.value}
+  })
+  }
+
+  const handleUpload = async(e) => {
+    e.preventDefault()
+    setUpload('Uploading...')
+    const data = new FormData()
+    data.append("file", selectedImage);
+    data.append("upload_preset", "upload");
+    try{
+      const res = await axios.post("https://api.cloudinary.com/v1_1/domzxxo2t/image/upload", data)
+      const  {url} = res.data;
+      setImage(url);
+      
+      setUpload('Uploading is 100%')
+        await userRequest.post("/products/create", {img: url , ...input , ...selectedOptions})
+    }
+    catch(error) 
+    {
+      console.log(error);
+      setUpload("Uploading failed");
+    }
+  }
+  
   return (
     <div className="m-5">
       <div>
@@ -15,19 +79,24 @@ const NewProduct = () => {
             {/* Image Upload */}
             <div className="flex flex-col gap-2">
               <label>Product:</label>
-              <div className="w-24 h-24 border-2 rounded-lg flex items-center justify-center cursor-pointer">
-                <FaPlus className="text-[20px]" />
-              </div>
+              {!selectedImage ? (<div className="w-24 h-24 border-2 rounded-lg flex items-center justify-center cursor-pointer">
+                <label htmlFor="file" > <FaPlus className="text-[20px] cursor-pointer" /></label>
+              </div>) : (<img src={URL.createObjectURL(selectedImage)} alt="" className="w-24 h-24 object-cover rounded-lg"/>)}
+              <input type="file" id="file" onChange={handleImage} className="hidden"/>
             </div>
+
+            <span className="text-sm text-green-500">{upload}</span>
 
             {/* Product Name */}
             <div className="flex flex-col gap-1">
               <label htmlFor="productName">Product Name:</label>
-              <input
-                id="productName"
+            <input
                 type="text"
-                className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full"
-                placeholder="Write the product name"
+                name="title"
+                id=""
+                placeholder="Product Name"
+                onChange={handleInput}
+                className="w-full p-2 border border-gray-300 rounded-lg"
               />
             </div>
 
@@ -35,31 +104,41 @@ const NewProduct = () => {
             <div className="flex flex-col gap-1">
               <label htmlFor="description">Product Description:</label>
               <textarea
-                id="description"
-                rows="3"
-                className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full"
-                placeholder="Write about the product"
+                type="text"
+                cols={15}
+                rows={7}
+                name="desc"
+                onChange={handleInput}
+                id=""
+                placeholder="Product Description"
+                className="w-full p-2 border border-gray-300 rounded-lg"
               />
             </div>
 
             {/* Prices */}
             <div className="flex flex-col gap-1">
               <label htmlFor="originalPrice">Original Price:</label>
-              <input
-                id="originalPrice"
-                type="text"
-                className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full"
+             <input
+                type="number"
+                name="originalPrice"
+                id=""
+                onChange={handleInput}
                 placeholder="$100"
+                className="w-full p-2 border border-gray-300 rounded-lg"
               />
             </div>
+
             <div className="flex flex-col gap-1">
               <label htmlFor="discountedPrice">Discounted Price:</label>
-              <input
-                id="discountedPrice"
-                type="text"
-                className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full"
+                  <input
+                type="number"
+                name="discountedPrice"
+                id=""
+                onChange={handleInput}
                 placeholder="$80"
+                className="w-full p-2 border border-gray-300 rounded-lg"
               />
+
             </div>
           </div>
 
@@ -67,39 +146,50 @@ const NewProduct = () => {
           <div className="flex flex-col gap-5 w-full md:w-1/2">
             <div className="flex flex-col gap-1">
               <label htmlFor="wholesalePrice">Wholesale Price:</label>
-              <input
-                id="wholesalePrice"
-                type="text"
-                className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full"
+                  <input
+                type="number"
+                name="wholesalePrice"
+                onChange={handleInput}
+                id=""
                 placeholder="$70"
+                className="w-full p-2 border border-gray-300 rounded-lg"
               />
+
             </div>
 
             <div className="flex flex-col gap-1">
               <label htmlFor="wholesaleQty">Wholesale Quantity:</label>
               <input
-                id="wholesaleQty"
-                type="text"
-                className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full"
+                type="number"
+                name="wholesaleMinimumQuantity"
+                onChange={handleInput}
+                id=""
                 placeholder="10"
-              />
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              />    
             </div>
 
             <div className="flex flex-col gap-1">
+
               <label htmlFor="brand">Brand:</label>
-              <input
-                id="brand"
+
+                <input
                 type="text"
-                className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full"
-                placeholder="Kyle"
-              />
+                name="brand"
+                id=""
+                onChange={handleInput}
+                placeholder="Kylie"
+                className="w-full p-2 border border-gray-300 rounded-lg"
+              />       
             </div>
 
             <div className="flex flex-col gap-1">
               <label htmlFor="concern">Concern:</label>
               <select
-                id="concern"
-                className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full"
+              name="concern"
+                id=""
+                value="" 
+                className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full" onChange={handleOptions}
               >
                 <option>Dry Skin</option>
                 <option>Pigmentation</option>
@@ -126,9 +216,18 @@ const NewProduct = () => {
               </select>
             </div>
 
+            <div className="mt-5">
+                {selectedOptions.concern.map((option) => (
+                  <div key={option} className="flex items-center justify-between bg-white shadow-xl space-x-10 ">
+                        <span className="font-medium text-md">{option}</span>
+                        <FaTrash className="text-red-400 text-sm cursor-pointer" onClick={() => handleRemoveOptions("concern" , option)}/>
+                    </div>
+                ))}
+            </div>
+
             <div className="flex flex-col gap-1">
                 <label htmlFor=""> Skin type </label>
-                <select name="skin type" id="" className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full">
+                <select name="skinType" id="" value=""  className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full" onChange={handleOptions}>
                 <option>All</option>
                 <option>Oily</option>
                 <option>Dry</option>
@@ -137,14 +236,32 @@ const NewProduct = () => {
                 </select>
             </div>
 
+            <div className="mt-5">
+                {selectedOptions.skinType.map((option) => (
+                  <div key={option} className="flex items-center justify-between bg-white shadow-xl space-x-10 ">
+                        <span className="font-medium text-md">{option}</span>
+                        <FaTrash className="text-red-400 text-sm cursor-pointer" onClick={() => handleRemoveOptions("skinType" , option)}/>
+                    </div>
+                ))}
+            </div>
+
             <div className="flex flex-col gap-1">
                 <label htmlFor=""> Products Types </label>
-                <select name="skin type" id="" className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full">
+                <select name="categories" id="" value=""  className="border-2 border-gray-300 outline-none rounded-md px-3 py-2 w-full" onChange={handleOptions}>
                 <option>Toners</option>
                 <option>Serums</option>
                 <option>Foundations</option>
                 <option>Lotions</option>
                 </select>
+            </div>
+
+              <div className="mt-5">
+                {selectedOptions.categories.map((option) => (
+                  <div key={option} className="flex items-center justify-between bg-white shadow-xl space-x-10 ">
+                        <span className="font-medium text-md">{option}</span>
+                        <FaTrash className="text-red-400 text-sm cursor-pointer" onClick={() => handleRemoveOptions("categories" , option)}/>
+                    </div>
+                ))}
             </div>
 
           </div>
@@ -155,6 +272,7 @@ const NewProduct = () => {
           <button
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-md w-full md:w-auto"
+            onClick={handleUpload}
           >
             Submit Product
           </button>

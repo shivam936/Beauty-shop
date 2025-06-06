@@ -64,7 +64,7 @@ export const getAllProducts = asyncHandler(async(req , res) => {
 
     if(qNew)
     {
-        products = await Product.find().sort({createdAt : -1})
+        products = await Product.find().sort({createdAt : -1});
     }
     if(qSearch)
     {
