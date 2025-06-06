@@ -13,14 +13,17 @@ const productSchema = new mongoose.Schema({
 
     whatIntheBox:{
         type:String,
-        required:true
     },
 
     img:{
         type:String,
         required:true
     },
-   
+    
+    video:{
+    type: String
+    },
+
     wholsesalePrice:{
         type:Number
     },
@@ -47,7 +50,6 @@ const productSchema = new mongoose.Schema({
 
     originalPrice:{
         type:Number,
-        required:true
     },
     
     discountedPrice:{
@@ -61,7 +63,7 @@ const productSchema = new mongoose.Schema({
 
     rating:[
         {
-            star: Number,
+            star: {type : String},
             name: {type : String},
             comment: {type: String},
             postedBy: {type: String}
